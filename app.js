@@ -85,6 +85,17 @@ async function initializeApp() {
         appState.favorites = JSON.parse(savedFavorites);
     }
 
+    // Try to load and display logo
+    const logoImg = document.getElementById('headerLogo');
+    if (logoImg) {
+        logoImg.addEventListener('load', function() {
+            this.style.display = 'block';
+        });
+        logoImg.addEventListener('error', function() {
+            this.style.display = 'none';
+        });
+    }
+
     // Load data from JSON files
     await loadData();
 
