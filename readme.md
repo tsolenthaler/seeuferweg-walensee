@@ -6,8 +6,16 @@ Auch als Liste oder Kacheln können diese aufgelistet und nach Namen, Typ, Kateg
 Diese Objekte können nach Name, Ort, Datum oder Preis soriert werden.
 Jedes Objekt kann als Favoriten-Liste gespeichert und diese Liste kann mit anderen geteilt werden.
 Die Web-App ist in deutsch und english verfügbar.
-Das Design soll gleich sein wie https://seeuferweg-walensee.dev.cms.tso.ch/de/map.html. 
-Der Content soll von https://opendata.ost.contentdesk.io/api/products.json und https://opendata.visitgl.contentdesk.io/api/products.json übernommen werden.
+Das Design soll gleich sein wie https://seeuferweg-walensee.dev.cms.tso.ch/de/map.html. Die folgende CSS Styles nutzt:
+https://seeuferweg-walensee.dev.cms.tso.ch/layout-canvas/styles/bundle-components.css?v=e9750dcb
+https://seeuferweg-walensee.dev.cms.tso.ch/layout-canvas/styles/bundle-all.css?v=2efa3ed0
+https://seeuferweg-walensee.dev.cms.tso.ch/files/design_assets/design-seeuferweg-walensee/css/custom.css
+und Logo:
+https://seeuferweg-walensee.dev.cms.tso.ch/assets/images/r/logo-seeuferweg-orange-weiss-yr1vvxpxxtpf3yt.svg
+
+Der Content soll von ostschweiz.json und glanerland.json übernommen werden.
+
+Die Impresum und Datenschutz-Seite soll übernommen werden.
 
 Das Ergenis soll als github Pages veröffentlicht werden können.
 
