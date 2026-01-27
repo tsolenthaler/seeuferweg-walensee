@@ -1,0 +1,99 @@
+{
+  "app": {
+    "name": "Seeuferweg Walensee",
+    "version": "1.0.0",
+    "description": "Interactive web app for exploring places, routes, events and offers around Lake Walen",
+    "repository": "https://github.com/tsolenthaler/seeuferweg-walensee",
+    "license": "MIT"
+  },
+  "map": {
+    "center": {
+      "latitude": 47.12,
+      "longitude": 9.08
+    },
+    "zoom": 11,
+    "tileLayer": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  "languages": {
+    "default": "de",
+    "supported": ["de", "en"]
+  },
+  "colors": {
+    "primary": "#0066cc",
+    "secondary": "#f0f0f0",
+    "text": "#333",
+    "border": "#ddd",
+    "success": "#4caf50",
+    "warning": "#ff9800",
+    "danger": "#f44336"
+  },
+  "features": {
+    "map": {
+      "enabled": true,
+      "provider": "leaflet",
+      "clustering": false
+    },
+    "tilesView": {
+      "enabled": true,
+      "itemsPerPage": null,
+      "columnsPerRow": "auto-fill"
+    },
+    "listView": {
+      "enabled": true,
+      "sortable": true,
+      "filterable": true
+    },
+    "filtering": {
+      "searchable": true,
+      "byType": true,
+      "byCategory": true,
+      "byPrice": true,
+      "byDate": true,
+      "byLocation": true
+    },
+    "sorting": {
+      "byName": true,
+      "byLocation": true,
+      "byPrice": true,
+      "byDate": true
+    },
+    "favorites": {
+      "enabled": true,
+      "shareable": true,
+      "exportable": false,
+      "storage": "localStorage"
+    },
+    "languages": {
+      "enabled": true,
+      "switchable": true,
+      "persistent": true
+    }
+  },
+  "dataFiles": [
+    {
+      "name": "ostschweiz.json",
+      "path": "/ostschweiz.json",
+      "format": "schema.org",
+      "region": "Ostschweiz"
+    },
+    {
+      "name": "glarnerland.json",
+      "path": "/glarnerland.json",
+      "format": "schema.org",
+      "region": "Glarnerland"
+    }
+  ],
+  "performance": {
+    "caching": "client-side",
+    "localStorage": true,
+    "maxDataSize": "10MB",
+    "lazyLoading": false
+  },
+  "deployment": {
+    "platform": "GitHub Pages",
+    "buildRequired": false,
+    "customDomain": true,
+    "https": true
+  }
+}

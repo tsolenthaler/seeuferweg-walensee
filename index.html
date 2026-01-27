@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seeuferweg Walensee</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>Seeuferweg Walensee</h1>
+                <div class="header-controls">
+                    <button id="langToggle" class="lang-btn">English</button>
+                    <button id="viewToggle" class="view-toggle-btn" title="Toggle view">
+                        <span id="viewIcon">🗺️</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <!-- Filters Section -->
+                <div class="filter-section">
+                    <h3 data-i18n="filters">Filter</h3>
+                    
+                    <div class="filter-group">
+                        <label data-i18n="search">Search</label>
+                        <input type="text" id="searchInput" placeholder="Search...">
+                    </div>
+
+                    <div class="filter-group">
+                        <label data-i18n="type">Type</label>
+                        <select id="typeFilter">
+                            <option value="">All Types</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label data-i18n="category">Category</label>
+                        <select id="categoryFilter">
+                            <option value="">All Categories</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label data-i18n="price">Price Range</label>
+                        <input type="range" id="priceFilter" min="0" max="500" value="500">
+                        <span id="priceValue">CHF 0 - 500</span>
+                    </div>
+
+                    <button id="resetFilters" class="btn btn-secondary" data-i18n="reset">Reset Filters</button>
+                </div>
+
+                <!-- Sorting Section -->
+                <div class="filter-section">
+                    <h3 data-i18n="sort">Sort By</h3>
+                    <select id="sortBy">
+                        <option value="name">Name</option>
+                        <option value="location">Location</option>
+                        <option value="date">Date</option>
+                        <option value="price">Price</option>
+                    </select>
+                </div>
+
+                <!-- Favorites Section -->
+                <div class="filter-section">
+                    <h3 data-i18n="favorites">Favorites</h3>
+                    <button id="viewFavorites" class="btn btn-primary" data-i18n="viewFavorites">View Favorites</button>
+                    <button id="shareFavorites" class="btn btn-secondary" data-i18n="shareFavorites">Share</button>
+                </div>
+
+                <!-- Items List -->
+                <div class="items-list-container">
+                    <h3 data-i18n="places">Places & Offers</h3>
+                    <div id="itemsList" class="items-list"></div>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <div class="content-area">
+                <!-- Map Container -->
+                <div id="mapContainer" class="map-container">
+                    <div id="map" class="map"></div>
+                </div>
+
+                <!-- Tiles/Grid View -->
+                <div id="tilesContainer" class="tiles-container hidden">
+                    <div id="tilesList" class="tiles-list"></div>
+                </div>
+
+                <!-- List View -->
+                <div id="listContainer" class="list-container hidden">
+                    <table id="listTable" class="list-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <input type="checkbox" id="selectAll">
+                                </th>
+                                <th data-i18n="name">Name</th>
+                                <th data-i18n="type">Type</th>
+                                <th data-i18n="location">Location</th>
+                                <th data-i18n="price">Price</th>
+                                <th data-i18n="actions">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Details -->
+    <div id="detailsModal" class="modal hidden">
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Modal for Share -->
+    <div id="shareModal" class="modal hidden">
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <h2 data-i18n="shareFavorites">Share Favorites</h2>
+            <textarea id="shareUrl" readonly></textarea>
+            <button id="copyShareUrl" class="btn btn-primary" data-i18n="copy">Copy</button>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
