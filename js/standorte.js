@@ -11,11 +11,11 @@ let currentView = 'grid';
 let filteredPOIs = [];
 
 document.addEventListener('DOMContentLoaded', async function() {
-    dataProcessor = new DataProcessor();
-    favoritesManager = new FavoritesManager();
+    window.dataProcessor = new DataProcessor();
+    window.favoritesManager = new FavoritesManager();
     
-    favoritesManager.importFromURL();
-    favoritesManager.updateBadge();
+    window.favoritesManager.importFromURL();
+    window.favoritesManager.updateBadge();
     
     await loadData();
     setupEventListeners();
@@ -33,15 +33,8 @@ async function loadData() {
             </div>
         `;
         
-        await dataProcessor.loadAllData();
-        filteredPOIs = dataProcessor.getAllPOIs();
-        
-        console.log(`Loaded ${filteredPOIs.length} POIs total`);
-        console.log('POIs by source:', {
-            heidiland: filteredPOIs.filter(p => p.source === 'heidiland').length,
-            glarnerland: filteredPOIs.filter(p => p.source === 'glarnerland').length,
-            rapperswil: filteredPOIs.filter(p => p.source === 'rapperswil').length
-        });
+        await window.dataProcessor.loadAllData();
+        filteredPOIs = window.dataProcessor.getAllPOIs();
         
         setupFilters();
         displayResults();
@@ -60,7 +53,7 @@ async function loadData() {
 }
 
 function setupFilters() {
-    const types = dataProcessor.getTypes();
+    const types = window.dataProcessor.getTypes();
     const typeFiltersContainer = document.getElementById('typeFilters');
     
     typeFiltersContainer.innerHTML = types.map(type => `
@@ -102,7 +95,7 @@ function applyFilters() {
     const selectedTypes = Array.from(document.querySelectorAll('.type-filter:checked'))
         .map(cb => cb.value);
     
-    filteredPOIs = dataProcessor.getAllPOIs().filter(poi => {
+    filteredPOIs = window.dataProcessor.getAllPOIs().filter(poi => {
         // Type filter
         if (!selectedTypes.includes(poi.type)) return false;
         
@@ -149,10 +142,13 @@ function displayGridView() {
         return;
     }
     
-    container.innerHTML = filteredPOIs.map(poi => {
-        const card = window.appUtils.createPOICard(poi);
-        return card.replace('<div class="col-md-4">', '<div class="col-md-4 col-sm-6">');
-    }).join('');
+    // Create row wrapper
+    container.innerHTML = '<div class="row g-4">' + 
+        filteredPOIs.map(poi => {
+            const card = window.appUtils.createPOICard(poi);
+            return card.replace('<div class="col-md-4">', '<div class="col-lg-4 col-md-6">');
+        }).join('') +
+        '</div>';
     
     window.appUtils.attachFavoriteListeners();
 }
@@ -171,7 +167,7 @@ function displayListView() {
 
 function createListItem(poi) {
     const image = poi.images[0] || 'https://via.placeholder.com/200x150/ff9c21/ffffff?text=Kein+Bild';
-    const isFavorite = favoritesManager.isFavorite(poi.id);
+    const isFavorite = window.favoritesManager.isFavorite(poi.id);
     
     return `
         <div class="card mb-3">
@@ -242,7 +238,7 @@ function displayMapView() {
 
 function createPopupContent(poi) {
     const image = poi.images[0] || '';
-    const isFavorite = favoritesManager.isFavorite(poi.id);
+    const isFavorite = window.favoritesManager.isFavorite(poi.id);
     
     return `
         <div style="min-width: 200px;">
@@ -263,7 +259,7 @@ function createPopupContent(poi) {
 }
 
 function toggleFavoriteFromMap(poiId) {
-    favoritesManager.toggle(poiId);
+    window.favoritesManager.toggle(poiId);
     displayMapView(); // Refresh map to update popup
 }
 

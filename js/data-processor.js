@@ -97,44 +97,43 @@ class DataProcessor {
     }
 
     /**
-     * Normalize Heidiland data (currently empty JSON)
+     * Normalize Heidiland data (Package/Product data without geo coordinates)
      */
     normalizeHeidiland(items) {
         if (!items || items.length === 0) return [];
         
+        // Heidiland contains packages (e.g., ski packages) without geo coordinates
+        // We'll include them but without location data for mapping
         return items
-            .filter(item => {
-                // Check if geo coordinates exist
-                if (!item.geo?.latitude || !item.geo?.longitude) return false;
+            .map(item => {
+                const name = item.name?.de || item.name?.en || item.name || 'Unbekannt';
+                const description = this.extractDescription(item);
                 
-                const lat = parseFloat(item.geo.latitude);
-                const lon = parseFloat(item.geo.longitude);
-                
-                // Filter for Walensee region
-                return lat && lon && this.isInWalenseeRegion(lat, lon);
-            })
-            .map(item => ({
-                id: item.identifier || item.id || Math.random().toString(36),
-                source: 'heidiland',
-                name: item.name?.de || item.name?.en || item.name || 'Unbekannt',
-                description: this.extractDescription(item),
-                type: this.categorizeType(item['@type'] || item.type, item.additionalType),
-                category: this.extractCategory(item),
-                location: {
-                    lat: parseFloat(item.geo.latitude),
-                    lon: parseFloat(item.geo.longitude),
-                    address: item.address?.addressLocality || item.location?.de || '',
-                    postalCode: item.address?.postalCode || ''
-                },
-                images: this.extractImages(item),
-                contact: {
-                    phone: item.address?.telephone || item.telephone || '',
-                    email: item.address?.email || item.email || '',
-                    website: item.address?.url || item.url || ''
-                },
-                openingHours: item.openingHours?.de || item.openingHoursSpecification || '',
-                dateModified: item.dateModified || item.modified
-            }));
+                return {
+                    id: item.identifier || item.id || Math.random().toString(36),
+                    source: 'heidiland',
+                    name: name,
+                    description: description,
+                    type: this.categorizeType(item['@type'] || item.type, item.additionalType),
+                    category: this.extractCategory(item),
+                    location: {
+                        // Use address locality, no geo coordinates available
+                        lat: null,
+                        lon: null,
+                        address: item.address?.addressLocality || 'Heidiland',
+                        postalCode: item.address?.postalCode || ''
+                    },
+                    images: this.extractImages(item),
+                    contact: {
+                        phone: item.address?.telephone || item.telephone || '',
+                        email: item.address?.email || item.email || '',
+                        website: item.address?.url || item.url || item.offers?.url || ''
+                    },
+                    openingHours: item.openingHours?.de || item.openingHoursSpecification || '',
+                    price: item.offers?.description?.de || item.offers?.description?.en || '',
+                    dateModified: item.dateModified || item.modified
+                };
+            });
     }
     
     /**

@@ -73,22 +73,19 @@
     <script src="js/favorites.js"></script>
     <script src="js/app.js"></script>
     <script>
-        let dataProcessor;
-        let favoritesManager;
-
         document.addEventListener('DOMContentLoaded', async function() {
-            dataProcessor = new DataProcessor();
-            favoritesManager = new FavoritesManager();
-            favoritesManager.importFromURL();
-            favoritesManager.updateBadge();
+            window.dataProcessor = new DataProcessor();
+            window.favoritesManager = new FavoritesManager();
+            window.favoritesManager.importFromURL();
+            window.favoritesManager.updateBadge();
             
-            await dataProcessor.loadAllData();
+            await window.dataProcessor.loadAllData();
             displayHighlights();
         });
 
         function displayHighlights() {
             const container = document.getElementById('highlightsContainer');
-            const highlights = dataProcessor.getHighlights(999);
+            const highlights = window.dataProcessor.getHighlights(999);
             
             if (highlights.length === 0) {
                 container.innerHTML = '<div class="col-12"><div class="empty-state"><h3>Keine Highlights verfügbar</h3></div></div>';

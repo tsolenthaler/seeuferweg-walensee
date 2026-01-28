@@ -4,20 +4,19 @@
  */
 
 // Initialize global instances
-let dataProcessor;
-let favoritesManager;
+window.dataProcessor = new DataProcessor();
+window.favoritesManager = new FavoritesManager();
 
 // Initialize app when DOM is loaded
 document.addEventListener('DOMContentLoaded', async function() {
-    // Initialize managers
-    dataProcessor = new DataProcessor();
-    favoritesManager = new FavoritesManager();
+    // Import favorites from URL if present
+    window.favoritesManager.importFromURL();
     
     // Import favorites from URL if present
-    favoritesManager.importFromURL();
+    window.favoritesManager.importFromURL();
     
     // Update favorites badge
-    favoritesManager.updateBadge();
+    window.favoritesManager.updateBadge();
     
     // Load data
     await loadData();
@@ -29,7 +28,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 async function loadData() {
     try {
         // Load all data
-        await dataProcessor.loadAllData();
+        await window.dataProcessor.loadAllData();
         
         // Update statistics
         updateStats();
@@ -47,7 +46,10 @@ async function loadData() {
  * Update statistics on homepage
  */
 function updateStats() {
-    const stats = dataProcessor.getStats();
+    // Only update if elements exist (on homepage)
+    if (!document.getElementById('totalPOIs')) return;
+    
+    const stats = window.dataProcessor.getStats();
     
     document.getElementById('totalPOIs').textContent = stats.totalPOIs;
     document.getElementById('totalActivities').textContent = stats.totalActivities;
@@ -60,7 +62,10 @@ function updateStats() {
  */
 function displayFeaturedHighlights() {
     const container = document.getElementById('featuredHighlights');
-    const highlights = dataProcessor.getHighlights(6);
+    // Only display if element exists (on homepage)
+    if (!container) return;
+    
+    const highlights = window.dataProcessor.getHighlights(6);
     
     if (highlights.length === 0) {
         container.innerHTML = `
@@ -85,7 +90,7 @@ function displayFeaturedHighlights() {
  */
 function createPOICard(poi) {
     const image = poi.images[0] || 'https://via.placeholder.com/400x300/ff9c21/ffffff?text=Kein+Bild';
-    const isFavorite = favoritesManager.isFavorite(poi.id);
+    const isFavorite = window.favoritesManager.isFavorite(poi.id);
     
     return `
         <div class="col-md-4">

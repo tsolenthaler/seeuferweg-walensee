@@ -99,16 +99,13 @@
     <script src="js/favorites.js"></script>
     <script src="js/app.js"></script>
     <script>
-        let dataProcessor;
-        let favoritesManager;
-
         document.addEventListener('DOMContentLoaded', async function() {
-            dataProcessor = new DataProcessor();
-            favoritesManager = new FavoritesManager();
-            favoritesManager.importFromURL();
-            favoritesManager.updateBadge();
+            window.dataProcessor = new DataProcessor();
+            window.favoritesManager = new FavoritesManager();
+            window.favoritesManager.importFromURL();
+            window.favoritesManager.updateBadge();
             
-            await dataProcessor.loadAllData();
+            await window.dataProcessor.loadAllData();
             displayFavorites();
             
             setupEventListeners();
@@ -116,16 +113,16 @@
 
         function setupEventListeners() {
             document.getElementById('exportJSON').addEventListener('click', () => {
-                favoritesManager.exportJSON();
+                window.favoritesManager.exportJSON();
             });
             
             document.getElementById('shareURL').addEventListener('click', () => {
-                favoritesManager.exportURL();
+                window.favoritesManager.exportURL();
             });
             
             document.getElementById('clearAll').addEventListener('click', () => {
                 if (confirm('Möchten Sie wirklich alle Favoriten löschen?')) {
-                    favoritesManager.clear();
+                    window.favoritesManager.clear();
                     displayFavorites();
                 }
             });
@@ -135,7 +132,7 @@
 
         function displayFavorites() {
             const container = document.getElementById('favoritesContainer');
-            const favoriteIds = favoritesManager.getAll();
+            const favoriteIds = window.favoritesManager.getAll();
             
             if (favoriteIds.length === 0) {
                 container.innerHTML = `
@@ -154,7 +151,7 @@
             }
             
             const favoritePOIs = favoriteIds
-                .map(id => dataProcessor.getPOIById(id))
+                .map(id => window.dataProcessor.getPOIById(id))
                 .filter(poi => poi !== undefined);
             
             container.innerHTML = favoritePOIs.map(poi => window.appUtils.createPOICard(poi)).join('');

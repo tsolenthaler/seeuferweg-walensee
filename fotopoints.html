@@ -87,25 +87,23 @@
     <script src="js/favorites.js"></script>
     <script src="js/app.js"></script>
     <script>
-        let dataProcessor;
-        let favoritesManager;
         let photoModal;
 
         document.addEventListener('DOMContentLoaded', async function() {
-            dataProcessor = new DataProcessor();
-            favoritesManager = new FavoritesManager();
-            favoritesManager.importFromURL();
-            favoritesManager.updateBadge();
+            window.dataProcessor = new DataProcessor();
+            window.favoritesManager = new FavoritesManager();
+            window.favoritesManager.importFromURL();
+            window.favoritesManager.updateBadge();
             
             photoModal = new bootstrap.Modal(document.getElementById('photoModal'));
             
-            await dataProcessor.loadAllData();
+            await window.dataProcessor.loadAllData();
             displayFotopoints();
         });
 
         function displayFotopoints() {
             const container = document.getElementById('photopointsContainer');
-            const fotopoints = dataProcessor.getFotopoints();
+            const fotopoints = window.dataProcessor.getFotopoints();
             
             if (fotopoints.length === 0) {
                 container.innerHTML = '<div class="empty-state"><h3>Keine Fotopoints verfügbar</h3></div>';

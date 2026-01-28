@@ -73,22 +73,19 @@
     <script src="js/favorites.js"></script>
     <script src="js/app.js"></script>
     <script>
-        let dataProcessor;
-        let favoritesManager;
-
         document.addEventListener('DOMContentLoaded', async function() {
-            dataProcessor = new DataProcessor();
-            favoritesManager = new FavoritesManager();
-            favoritesManager.importFromURL();
-            favoritesManager.updateBadge();
+            window.dataProcessor = new DataProcessor();
+            window.favoritesManager = new FavoritesManager();
+            window.favoritesManager.importFromURL();
+            window.favoritesManager.updateBadge();
             
-            await dataProcessor.loadAllData();
+            await window.dataProcessor.loadAllData();
             displayActivities();
         });
 
         function displayActivities() {
             const container = document.getElementById('activitiesContainer');
-            const activities = dataProcessor.getActivities();
+            const activities = window.dataProcessor.getActivities();
             
             if (activities.length === 0) {
                 container.innerHTML = '<div class="col-12"><div class="empty-state"><h3>Keine Aktivitäten verfügbar</h3></div></div>';
