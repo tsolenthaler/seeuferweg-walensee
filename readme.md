@@ -63,10 +63,27 @@ Die App wird dann unter `https://tsolenthaler.github.io/seeuferweg-walensee/` ve
 Die App integriert Daten aus folgenden OpenData-Quellen:
 
 1. **Heidiland**: [OpenData Heidiland](https://opendata.hlt.contentdesk.io/map/products.html)
+   - 423 POIs mit 67 verschiedenen Typen
+   - Hotels, Restaurants, Aktivitäten, Sehenswürdigkeiten
+   
 2. **Glarnerland**: [OpenData Glarnerland](https://opendata.visitgl.contentdesk.io/map/products.html)
+   - 29 POIs (Webcams, Unterkünfte, Camping-Plätze)
+   
 3. **Rapperswil-Jona**: [Rapperswil-Jona API](https://www.rapperswil-zuerichsee.ch/en/api/v2/data)
+   - Kategorien-Struktur (keine direkten POI-Daten)
 
-Die Daten werden automatisch auf die Walensee-Region gefiltert und in ein einheitliches Format normalisiert.
+**Automatische Filterung**: Alle Daten werden automatisch auf die Walensee-Region gefiltert (Lat: 46.9-47.2, Lon: 8.95-9.25).
+
+**Unterstützte POI-Typen**:
+- 🏨 Unterkünfte (Hotels, Ferienwohnungen, B&B, etc.)
+- 🍽️ Gastronomie (Restaurants, Bergrestaurants, Cafés, etc.)
+- 🎯 Attraktionen (Museen, Erlebniswege, Aussichtspunkte, etc.)
+- ⛷️ Sport & Wellness (Skigebiete, Bergbahnen, Wellness, etc.)
+- 🏕️ Camping & Outdoor
+- 🛍️ Shopping (Hofläden, Weingüter, etc.)
+- 📸 Webcams & Fotopoints
+
+Die Daten werden in Echtzeit normalisiert und kategorisiert.
 
 ## 🎨 Design
 

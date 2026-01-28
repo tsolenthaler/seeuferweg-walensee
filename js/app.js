@@ -162,6 +162,14 @@ function getTypeLabel(type) {
         'webcam': 'Webcam',
         'infrastructure': 'Infrastruktur',
         'camping': 'Camping',
+        'sport': 'Sport',
+        'wellness': 'Wellness',
+        'nature': 'Natur',
+        'service': 'Service',
+        'shopping': 'Shopping',
+        'package': 'Angebot',
+        'entertainment': 'Unterhaltung',
+        'event': 'Veranstaltung',
         'other': 'Sonstiges'
     };
     return labels[type] || type;

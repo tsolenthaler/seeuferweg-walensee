@@ -104,32 +104,93 @@ class DataProcessor {
         
         return items
             .filter(item => {
-                const lat = parseFloat(item.geo?.latitude);
-                const lon = parseFloat(item.geo?.longitude);
+                // Check if geo coordinates exist
+                if (!item.geo?.latitude || !item.geo?.longitude) return false;
+                
+                const lat = parseFloat(item.geo.latitude);
+                const lon = parseFloat(item.geo.longitude);
+                
+                // Filter for Walensee region
                 return lat && lon && this.isInWalenseeRegion(lat, lon);
             })
             .map(item => ({
-                id: item.identifier || item.id,
+                id: item.identifier || item.id || Math.random().toString(36),
                 source: 'heidiland',
-                name: item.name?.de || item.name || 'Unbekannt',
-                description: item.description?.de || item.description || '',
+                name: item.name?.de || item.name?.en || item.name || 'Unbekannt',
+                description: this.extractDescription(item),
                 type: this.categorizeType(item['@type'] || item.type, item.additionalType),
                 category: this.extractCategory(item),
                 location: {
                     lat: parseFloat(item.geo.latitude),
                     lon: parseFloat(item.geo.longitude),
-                    address: item.address?.addressLocality || '',
+                    address: item.address?.addressLocality || item.location?.de || '',
                     postalCode: item.address?.postalCode || ''
                 },
-                images: item.image?.map(img => img.contentUrl || img) || [],
+                images: this.extractImages(item),
                 contact: {
-                    phone: item.address?.telephone || '',
-                    email: item.address?.email || '',
-                    website: item.address?.url || ''
+                    phone: item.address?.telephone || item.telephone || '',
+                    email: item.address?.email || item.email || '',
+                    website: item.address?.url || item.url || ''
                 },
-                openingHours: item.openingHours?.de || '',
-                dateModified: item.dateModified
+                openingHours: item.openingHours?.de || item.openingHoursSpecification || '',
+                dateModified: item.dateModified || item.modified
             }));
+    }
+    
+    /**
+     * Extract description from various fields
+     */
+    extractDescription(item) {
+        // Try multiple description fields
+        return item.description?.de || 
+               item.description?.en || 
+               item.description || 
+               item.disambiguatingDescription?.de || 
+               item.disambiguatingDescription?.en ||
+               item.disambiguatingDescription ||
+               item.abstract?.de ||
+               item.abstract?.en ||
+               item.abstract ||
+               '';
+    }
+    
+    /**
+     * Extract images from various formats
+     */
+    extractImages(item) {
+        const images = [];
+        
+        if (item.image) {
+            if (Array.isArray(item.image)) {
+                item.image.forEach(img => {
+                    if (typeof img === 'string') {
+                        images.push(img);
+                    } else if (img.contentUrl) {
+                        images.push(img.contentUrl);
+                    } else if (img.url) {
+                        images.push(img.url);
+                    }
+                });
+            } else if (typeof item.image === 'string') {
+                images.push(item.image);
+            } else if (item.image.contentUrl) {
+                images.push(item.image.contentUrl);
+            }
+        }
+        
+        // Check for photo field
+        if (item.photo) {
+            if (Array.isArray(item.photo)) {
+                item.photo.forEach(photo => {
+                    if (typeof photo === 'string') images.push(photo);
+                    else if (photo.contentUrl) images.push(photo.contentUrl);
+                });
+            } else if (typeof item.photo === 'string') {
+                images.push(item.photo);
+            }
+        }
+        
+        return images;
     }
 
     /**
@@ -137,16 +198,94 @@ class DataProcessor {
      */
     categorizeType(type, additionalType) {
         const typeMap = {
+            // Accommodation
             'LodgingBusiness': 'accommodation',
             'Hotel': 'accommodation',
             'HolidayApartment': 'accommodation',
+            'BedAndBreakfast': 'accommodation',
+            'FarmLodging': 'accommodation',
+            'GroupAccommodation': 'accommodation',
+            'Accommodation': 'accommodation',
+            
+            // Gastronomy
             'Restaurant': 'restaurant',
             'FoodEstablishment': 'restaurant',
+            'MountainRestaurant': 'restaurant',
+            'BarOrPub': 'restaurant',
+            'CafeOrCoffeeShop': 'restaurant',
+            'FastFoodRestaurant': 'restaurant',
+            'Bistro': 'restaurant',
+            'Imbiss': 'restaurant',
+            
+            // Attractions & Activities
             'TouristAttraction': 'attraction',
+            'Experience': 'attraction',
+            'Museum': 'attraction',
+            'GuidedTour': 'attraction',
+            'ShipTour': 'attraction',
+            'NatureTrail': 'attraction',
+            'ThemeTrail': 'attraction',
+            'HikingTrail': 'attraction',
+            'TobogganRun': 'attraction',
+            'SummerTobogganTrack': 'attraction',
+            'HighRopesCourse': 'attraction',
+            'MinigolfCourse': 'attraction',
+            'Playground': 'attraction',
+            'BikePark': 'attraction',
+            'Viewpoint': 'attraction',
+            'Monument': 'attraction',
+            'Ruin': 'attraction',
+            
+            // Sports & Wellness
+            'GolfCourse': 'sport',
+            'SkiSlope': 'sport',
+            'SkiLift': 'sport',
+            'CableCarStation': 'sport',
+            'CableCar': 'sport',
+            'ThermalSpa': 'wellness',
+            'IndoorPool': 'wellness',
+            'Sauna': 'wellness',
+            'SportHall': 'sport',
+            'TennisComplex': 'sport',
+            'SkiSchool': 'sport',
+            
+            // Nature & Places
             'Place': 'place',
+            'LakeBodyOfWater': 'nature',
+            'Alp': 'nature',
+            
+            // Services
             'Webcam': 'webcam',
             'CivicStructure': 'infrastructure',
-            'RVPark': 'camping'
+            'Services': 'service',
+            'BikeRental': 'service',
+            'BikeStore': 'service',
+            'SportingGoodsStore': 'service',
+            
+            // Camping
+            'RVPark': 'camping',
+            'Campground': 'camping',
+            'Pitch': 'camping',
+            
+            // Shopping & Food
+            'Winery': 'shopping',
+            'Vinotheque': 'shopping',
+            'FarmShop': 'shopping',
+            'ButcherShop': 'shopping',
+            'Dairy': 'shopping',
+            'ConvenienceStore': 'shopping',
+            'ShoppingCenter': 'shopping',
+            'OutletStore': 'shopping',
+            'Store': 'shopping',
+            'BookStore': 'shopping',
+            'Farm': 'shopping',
+            
+            // Other
+            'Package': 'package',
+            'Offer': 'package',
+            'Casino': 'entertainment',
+            'Cinema': 'entertainment',
+            'CongressCenter': 'event'
         };
 
         return typeMap[type] || typeMap[additionalType] || 'other';
@@ -246,25 +385,79 @@ class DataProcessor {
      * Get highlights (featured items)
      */
     getHighlights(limit = 6) {
-        // Filter for attractive POIs with images
-        return this.normalizedData
-            .filter(poi => 
-                poi.images.length > 0 && 
-                (poi.type === 'attraction' || poi.type === 'place')
-            )
+        // Prioritize scenic webcams and accommodations with great views
+        const highlights = this.normalizedData
+            .filter(poi => poi.images.length > 0)
+            .map(poi => {
+                // Calculate priority score
+                let score = 0;
+                const nameAndDesc = (poi.name + ' ' + poi.description).toLowerCase();
+                
+                // Webcams with scenic names get high priority
+                if (poi.type === 'webcam') {
+                    if (nameAndDesc.includes('walensee')) score += 100;
+                    if (nameAndDesc.includes('aussicht') || nameAndDesc.includes('panorama')) score += 50;
+                    score += 30; // Base score for webcams
+                }
+                
+                // Accommodations with descriptions
+                if (poi.type === 'accommodation') {
+                    if (poi.description.length > 100) score += 40;
+                    if (nameAndDesc.includes('aussicht')) score += 30;
+                }
+                
+                // Camping spots with activities
+                if (poi.type === 'camping') {
+                    if (poi.description.length > 200) score += 45;
+                }
+                
+                // Boost for longer descriptions (more interesting content)
+                score += Math.min(poi.description.length / 50, 20);
+                
+                return { ...poi, _score: score };
+            })
+            .filter(poi => poi._score > 20)
+            .sort((a, b) => b._score - a._score)
             .slice(0, limit);
+        
+        // Remove score property
+        return highlights.map(({ _score, ...poi }) => poi);
     }
 
     /**
      * Get activities
      */
     getActivities() {
-        return this.normalizedData.filter(poi => 
-            poi.type === 'attraction' || 
-            poi.description.toLowerCase().includes('aktivität') ||
-            poi.description.toLowerCase().includes('wandern') ||
-            poi.description.toLowerCase().includes('sport')
-        );
+        const activityKeywords = [
+            'wandern', 'wanderung', 'hiking', 'trail', 'pfad',
+            'bike', 'velo', 'rad', 'cycling',
+            'ski', 'snowboard', 'langlauf', 'winter',
+            'sport', 'aktivität', 'activity',
+            'bergbahn', 'seilbahn', 'sessellift', 'gondel',
+            'klettern', 'climbing', 'bouldern',
+            'schwimmen', 'baden', 'pool', 'wellness',
+            'segeln', 'boot', 'schiff',
+            'golf', 'tennis', 'minigolf',
+            'erlebnis', 'experience', 'abenteuer',
+            'tour', 'trekking', 'ausflug',
+            'spielplatz', 'playground',
+            'hochseilgarten', 'seilpark',
+            'rodelbahn', 'toboggan', 'schlittel'
+        ];
+        
+        const activityTypes = [
+            'sport', 'wellness', 'attraction',
+            'camping', 'nature'
+        ];
+        
+        return this.normalizedData.filter(poi => {
+            // Include specific activity types
+            if (activityTypes.includes(poi.type)) return true;
+            
+            // Check name and description for activity keywords
+            const searchText = (poi.name + ' ' + poi.description).toLowerCase();
+            return activityKeywords.some(keyword => searchText.includes(keyword));
+        });
     }
 
     /**
@@ -272,10 +465,28 @@ class DataProcessor {
      */
     getFotopoints() {
         return this.normalizedData
-            .filter(poi => 
-                poi.images.length > 0 && 
-                (poi.type === 'webcam' || poi.type === 'place' || poi.type === 'attraction')
-            );
+            .filter(poi => poi.images.length > 0)
+            .map(poi => {
+                // Calculate photo quality score
+                let score = 0;
+                const name = poi.name.toLowerCase();
+                
+                // Webcams are excellent photo points
+                if (poi.type === 'webcam') score += 50;
+                
+                // Scenic keywords
+                if (name.includes('aussicht') || name.includes('panorama')) score += 30;
+                if (name.includes('walensee')) score += 25;
+                if (name.includes('see') || name.includes('berg')) score += 15;
+                
+                // Locations with good photo opportunities
+                if (name.includes('alp') || name.includes('grat') || name.includes('tal')) score += 20;
+                
+                return { ...poi, _score: score };
+            })
+            .filter(poi => poi._score > 0)
+            .sort((a, b) => b._score - a._score)
+            .map(({ _score, ...poi }) => poi);
     }
 
     /**
