@@ -23,13 +23,39 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 async function loadData() {
     try {
+        // Show loading state
+        document.getElementById('gridView').innerHTML = `
+            <div class="col-12 text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Laden...</span>
+                </div>
+                <p class="mt-3">Daten werden geladen...</p>
+            </div>
+        `;
+        
         await dataProcessor.loadAllData();
         filteredPOIs = dataProcessor.getAllPOIs();
+        
+        console.log(`Loaded ${filteredPOIs.length} POIs total`);
+        console.log('POIs by source:', {
+            heidiland: filteredPOIs.filter(p => p.source === 'heidiland').length,
+            glarnerland: filteredPOIs.filter(p => p.source === 'glarnerland').length,
+            rapperswil: filteredPOIs.filter(p => p.source === 'rapperswil').length
+        });
         
         setupFilters();
         displayResults();
     } catch (error) {
         console.error('Error loading data:', error);
+        document.getElementById('gridView').innerHTML = `
+            <div class="col-12">
+                <div class="alert alert-danger">
+                    <h4>Fehler beim Laden der Daten</h4>
+                    <p>${error.message}</p>
+                    <button class="btn btn-primary" onclick="location.reload()">Seite neu laden</button>
+                </div>
+            </div>
+        `;
     }
 }
 
