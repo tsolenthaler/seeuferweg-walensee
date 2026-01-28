@@ -1,0 +1,59 @@
+{
+  "name": "Seeuferweg Walensee",
+  "short_name": "Seeuferweg",
+  "description": "Entdecken Sie Sehenswürdigkeiten und Aktivitäten rund um den Walensee",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ff9c21",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "logo-seeuferweg-orange.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "images/screenshot1.png",
+      "sizes": "540x720",
+      "type": "image/png"
+    },
+    {
+      "src": "images/screenshot2.png",
+      "sizes": "540x720",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["travel", "tourism", "navigation"],
+  "shortcuts": [
+    {
+      "name": "Standorte",
+      "short_name": "Standorte",
+      "description": "Alle Standorte anzeigen",
+      "url": "/standorte.html",
+      "icons": [{ "src": "logo-seeuferweg-orange.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Favoriten",
+      "short_name": "Favoriten",
+      "description": "Meine Favoriten anzeigen",
+      "url": "/favoriten.html",
+      "icons": [{ "src": "logo-seeuferweg-orange.svg", "sizes": "192x192" }]
+    }
+  ]
+}

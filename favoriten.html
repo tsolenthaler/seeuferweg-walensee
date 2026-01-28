@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favoriten - Seeuferweg Walensee</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="seeuferweg.css">
+    <link rel="stylesheet" href="app.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ff9c21">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <img src="logo-seeuferweg-orange.svg" alt="Seeuferweg Walensee" height="50">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Startseite</a></li>
+                    <li class="nav-item"><a class="nav-link" href="standorte.html">Standorte</a></li>
+                    <li class="nav-item"><a class="nav-link" href="highlights.html">Highlights</a></li>
+                    <li class="nav-item"><a class="nav-link" href="erlebnisse.html">Erlebnisse</a></li>
+                    <li class="nav-item"><a class="nav-link" href="fotopoints.html">Fotopoints</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="favoriten.html">Favoriten (<span id="favCount">0</span>)</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="section-start bg-light py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h1 class="mb-3">Meine Favoriten</h1>
+                    <p class="lead">Ihre gespeicherten Orte und Sehenswürdigkeiten</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div class="export-buttons">
+                        <button class="btn btn-outline-primary" id="exportJSON">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                            </svg>
+                            Als JSON exportieren
+                        </button>
+                        <button class="btn btn-outline-primary" id="shareURL">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5z"/>
+                            </svg>
+                            Link teilen
+                        </button>
+                        <button class="btn btn-outline-danger" id="clearAll">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                            </svg>
+                            Alle löschen
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5">
+        <div class="container">
+            <div class="row g-4" id="favoritesContainer">
+                <div class="col-12 text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Laden...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Seeuferweg Walensee</h5>
+                    <p class="text-muted">Entdecken Sie die Schönheit des Walensees</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="text-muted mb-0">&copy; 2026 Seeuferweg Walensee. Alle Rechte vorbehalten.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/data-processor.js"></script>
+    <script src="js/favorites.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        let dataProcessor;
+        let favoritesManager;
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            dataProcessor = new DataProcessor();
+            favoritesManager = new FavoritesManager();
+            favoritesManager.importFromURL();
+            favoritesManager.updateBadge();
+            
+            await dataProcessor.loadAllData();
+            displayFavorites();
+            
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('exportJSON').addEventListener('click', () => {
+                favoritesManager.exportJSON();
+            });
+            
+            document.getElementById('shareURL').addEventListener('click', () => {
+                favoritesManager.exportURL();
+            });
+            
+            document.getElementById('clearAll').addEventListener('click', () => {
+                if (confirm('Möchten Sie wirklich alle Favoriten löschen?')) {
+                    favoritesManager.clear();
+                    displayFavorites();
+                }
+            });
+            
+            window.addEventListener('favoritesChanged', displayFavorites);
+        }
+
+        function displayFavorites() {
+            const container = document.getElementById('favoritesContainer');
+            const favoriteIds = favoritesManager.getAll();
+            
+            if (favoriteIds.length === 0) {
+                container.innerHTML = `
+                    <div class="col-12">
+                        <div class="empty-state">
+                            <svg width="100" height="100" fill="#ff9c21" viewBox="0 0 16 16">
+                                <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                            </svg>
+                            <h3>Keine Favoriten</h3>
+                            <p>Sie haben noch keine Favoriten gespeichert</p>
+                            <a href="standorte.html" class="btn btn-primary mt-3">Standorte durchsuchen</a>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            const favoritePOIs = favoriteIds
+                .map(id => dataProcessor.getPOIById(id))
+                .filter(poi => poi !== undefined);
+            
+            container.innerHTML = favoritePOIs.map(poi => window.appUtils.createPOICard(poi)).join('');
+            window.appUtils.attachFavoriteListeners();
+        }
+    </script>
+</body>
+</html>

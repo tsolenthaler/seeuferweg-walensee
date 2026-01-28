@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Highlights - Seeuferweg Walensee</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="seeuferweg.css">
+    <link rel="stylesheet" href="app.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ff9c21">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <img src="logo-seeuferweg-orange.svg" alt="Seeuferweg Walensee" height="50">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Startseite</a></li>
+                    <li class="nav-item"><a class="nav-link" href="standorte.html">Standorte</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="highlights.html">Highlights</a></li>
+                    <li class="nav-item"><a class="nav-link" href="erlebnisse.html">Erlebnisse</a></li>
+                    <li class="nav-item"><a class="nav-link" href="fotopoints.html">Fotopoints</a></li>
+                    <li class="nav-item"><a class="nav-link" href="favoriten.html">Favoriten (<span id="favCount">0</span>)</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="section-start bg-light py-5">
+        <div class="container">
+            <h1 class="mb-3">Highlights am Walensee</h1>
+            <p class="lead">Die schönsten Sehenswürdigkeiten und Attraktionen rund um den Walensee</p>
+        </div>
+    </section>
+
+    <section class="py-5">
+        <div class="container">
+            <div class="row g-4" id="highlightsContainer">
+                <div class="col-12 text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Laden...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Seeuferweg Walensee</h5>
+                    <p class="text-muted">Entdecken Sie die Schönheit des Walensees</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="text-muted mb-0">&copy; 2026 Seeuferweg Walensee. Alle Rechte vorbehalten.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="js/data-processor.js"></script>
+    <script src="js/favorites.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        let dataProcessor;
+        let favoritesManager;
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            dataProcessor = new DataProcessor();
+            favoritesManager = new FavoritesManager();
+            favoritesManager.importFromURL();
+            favoritesManager.updateBadge();
+            
+            await dataProcessor.loadAllData();
+            displayHighlights();
+        });
+
+        function displayHighlights() {
+            const container = document.getElementById('highlightsContainer');
+            const highlights = dataProcessor.getHighlights(999);
+            
+            if (highlights.length === 0) {
+                container.innerHTML = '<div class="col-12"><div class="empty-state"><h3>Keine Highlights verfügbar</h3></div></div>';
+                return;
+            }
+            
+            container.innerHTML = highlights.map(poi => window.appUtils.createPOICard(poi)).join('');
+            window.appUtils.attachFavoriteListeners();
+        }
+    </script>
+</body>
+</html>

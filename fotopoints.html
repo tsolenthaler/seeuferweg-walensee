@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fotopoints - Seeuferweg Walensee</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="seeuferweg.css">
+    <link rel="stylesheet" href="app.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ff9c21">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <img src="logo-seeuferweg-orange.svg" alt="Seeuferweg Walensee" height="50">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Startseite</a></li>
+                    <li class="nav-item"><a class="nav-link" href="standorte.html">Standorte</a></li>
+                    <li class="nav-item"><a class="nav-link" href="highlights.html">Highlights</a></li>
+                    <li class="nav-item"><a class="nav-link" href="erlebnisse.html">Erlebnisse</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="fotopoints.html">Fotopoints</a></li>
+                    <li class="nav-item"><a class="nav-link" href="favoriten.html">Favoriten (<span id="favCount">0</span>)</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="section-start bg-light py-5">
+        <div class="container">
+            <h1 class="mb-3">Fotopoints am Walensee</h1>
+            <p class="lead">Die schönsten Fotospots für unvergessliche Erinnerungen</p>
+        </div>
+    </section>
+
+    <section class="py-5">
+        <div class="container">
+            <div class="photo-grid" id="photopointsContainer">
+                <div class="col-12 text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Laden...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Photo Modal -->
+    <div class="modal fade" id="photoModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="photoModalTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <img src="" id="photoModalImage" class="img-fluid w-100" alt="">
+                    <p class="mt-3" id="photoModalDescription"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Seeuferweg Walensee</h5>
+                    <p class="text-muted">Entdecken Sie die Schönheit des Walensees</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="text-muted mb-0">&copy; 2026 Seeuferweg Walensee. Alle Rechte vorbehalten.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/data-processor.js"></script>
+    <script src="js/favorites.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        let dataProcessor;
+        let favoritesManager;
+        let photoModal;
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            dataProcessor = new DataProcessor();
+            favoritesManager = new FavoritesManager();
+            favoritesManager.importFromURL();
+            favoritesManager.updateBadge();
+            
+            photoModal = new bootstrap.Modal(document.getElementById('photoModal'));
+            
+            await dataProcessor.loadAllData();
+            displayFotopoints();
+        });
+
+        function displayFotopoints() {
+            const container = document.getElementById('photopointsContainer');
+            const fotopoints = dataProcessor.getFotopoints();
+            
+            if (fotopoints.length === 0) {
+                container.innerHTML = '<div class="empty-state"><h3>Keine Fotopoints verfügbar</h3></div>';
+                return;
+            }
+            
+            container.innerHTML = fotopoints.map(poi => createPhotoItem(poi)).join('');
+        }
+
+        function createPhotoItem(poi) {
+            const image = poi.images[0] || 'https://via.placeholder.com/400x300/ff9c21/ffffff?text=Kein+Bild';
+            
+            return `
+                <div class="photo-item" onclick="showPhoto('${poi.id}')">
+                    <img src="${image}" alt="${poi.name}">
+                    <div class="photo-overlay">
+                        <h6 class="mb-1">${poi.name}</h6>
+                        <small>${poi.location.address}</small>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showPhoto(poiId) {
+            const poi = dataProcessor.getPOIById(poiId);
+            if (!poi) return;
+            
+            document.getElementById('photoModalTitle').textContent = poi.name;
+            document.getElementById('photoModalImage').src = poi.images[0] || '';
+            document.getElementById('photoModalDescription').textContent = poi.description;
+            
+            photoModal.show();
+        }
+    </script>
+</body>
+</html>
