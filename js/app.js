@@ -67,6 +67,16 @@ function displayFeaturedHighlights() {
     
     const highlights = window.dataProcessor.getHighlights(6);
     
+    // Load hero image from first highlight with image
+    const heroImageElement = document.getElementById('heroImage');
+    if (heroImageElement && highlights.length > 0) {
+        const highlightWithImage = highlights.find(h => h.images && h.images.length > 0);
+        if (highlightWithImage && highlightWithImage.images[0]) {
+            heroImageElement.src = highlightWithImage.images[0];
+            heroImageElement.alt = highlightWithImage.name;
+        }
+    }
+    
     if (highlights.length === 0) {
         container.innerHTML = `
             <div class="col-12">
